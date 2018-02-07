@@ -14,10 +14,11 @@ tokenParsed = tokenResponse['token']
 print(tokenParsed)
 
 # Construct the headers needed for api calls
-header = {'X-Cookie': 'token='+tokenParsed}
+header = {'X-Cookie': 'token=' + tokenParsed}
 
 # ------------------------------ Get Scan ---------------------------
-scanID = input("Enter scan ID \n") # Ex: 601 is SOC Agent Scan
-getScanInfo = requests.get('https://cloud.tenable.com/scans/'+scanID, headers=header)
+scanID = input("Enter scan ID \n")  # Ex: 601 is SOC Agent Scan
+getScanInfo = requests.get('https://cloud.tenable.com/scans/' + scanID, headers=header)
 scannerResponse = getScanInfo.json()
 cpprint(scannerResponse)
+
