@@ -21,3 +21,4 @@ scanID = input("Enter scan ID \n") # Ex: 601 is SOC Agent Scan
 getScanInfo = requests.get('https://cloud.tenable.com/scans/'+scanID, headers=header)
 scannerResponse = getScanInfo.json()
 cpprint(scannerResponse)
+
