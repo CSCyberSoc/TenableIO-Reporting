@@ -14,11 +14,31 @@ tokenParsed = tokenResponse['token']
 print(tokenParsed)
 
 # Construct the headers needed for api calls
-header = {'X-Cookie': 'token=' + tokenParsed}
+header = {'X-Cookie': 'token='+tokenParsed}
 
-# ------------------------------ Get Scan ---------------------------
-scanID = input("Enter scan ID \n")  # Ex: 601 is SOC Agent Scan
-getScanInfo = requests.get('https://cloud.tenable.com/scans/' + scanID, headers=header)
-scannerResponse = getScanInfo.json()
-cpprint(scannerResponse)
+# ------------------------------ Get Assets ---------------------------
+# Gets the list of the assets so that we can pull the pulgin id in the next query
+def getAssets(headerInfo):
+        getAssetList = requests.get('https://cloud.tenable.com/assets/', headers=headerInfo)
+        assetList = getAssetList.json()
+        assetParsed = assetList['assets']
+        idArray = []
+        for item in assetParsed:
+            assetID = item['id']
+            idArray.append(assetID)
+        print(idArray)
+        return
 
+getAssets(header)
+
+# ------------------------------ Get PluginID ---------------------------
+# def getPluginID(headerInfo):
+#     assetReturn = getAssets(header)
+#     cpprint(assetReturn)
+
+
+    # API call for plugin ID
+
+#     return
+#
+# getPluginID(header)
