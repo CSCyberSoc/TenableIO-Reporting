@@ -102,3 +102,7 @@ ENV/
 
 # apiVars
 apiVars.py
+
+*.xml
+
+*.iml
