@@ -31,10 +31,10 @@ def getAssets(headerInfo):
         # take each ID in the array and plug it into /workbenches/assets/{asset_id}/vulnerabilities
         vulnArray = []
         for id in idArray:
-            vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/'+id+'vulnerabilities', headers=headerInfo)
+            vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/'+id+'/vulnerabilities', headers=headerInfo)
+            vulnInfoJson = vulnInfo.json()
+            print(vulnInfoJson)
             vulnArray.append(vulnInfo)
-            print(vulnInfo)
-            # Receiving error 405 - method is not allowed
             # start writing to CSV from here?
         print(vulnArray)
         return
