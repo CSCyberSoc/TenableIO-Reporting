@@ -60,11 +60,11 @@ def getAssets(headerInfo):
 
         # Scaffolding method to write data to CSV
             with open('VulnReport.csv', 'w', newline='') as outfile:
-            fieldnames = ['Asset Name', 'Application ID', 'Vuln Count']
-            writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-            writer.writeheader()
-            data = [dict(zip(fieldnames, [k, v])) for k, v in newDict.items()]
-            writer.writerows(data)
+                fieldnames = ['Asset Name', 'Application ID', 'Vuln Count']
+                writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+                writer.writeheader()
+                data = [dict(zip(fieldnames, [k, v])) for k, v in newDict.items()]
+                writer.writerows(data)
 
          # --------------------- OLD METHOD - SAVED FOR REFERENCE AND VISIBILITY ------------------------ #
          #   i=0
