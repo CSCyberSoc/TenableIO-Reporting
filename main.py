@@ -33,7 +33,7 @@ def getAssets(headerInfo):
 
         # Adding static ID values as a control, in lieu of lines 27-30
         idArray.append('756591ee-1281-4094-8b86-1621df975951')
-        idArray.append('353df3b6-2c3a-432b-b1bb-97eb41662aa1')
+        idArray.append('9267e7e4-6020-4882-9294-b325b7419ee3')
 
         # Instantiating new dict
         idDict = {}
