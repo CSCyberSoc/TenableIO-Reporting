@@ -54,17 +54,21 @@ def getAssets(headerInfo):
         # print("Printing idDict key")
         # print(idDict.keys())
 
-        print("Printing idDict.values()")
-        print(idDict.values())
+        # print("Printing idDict.values()")
+        # print(idDict.values())
+
+        # print("Printing idDict['756591ee-1281-4094-8b86-1621df975951']")
+        # print(idDict['756591ee-1281-4094-8b86-1621df975951']["vulnerabilities"])
 
         for key in idDict.keys():
             # print("Printing Key")
             # print(key)
-            for value in idDict.values():
-                # print("Printing idDict.values")
-                # print(idDict.values())
-                # print("Printing value['vulnerabilities']")
-                # print(value['vulnerabilities'])
+            print(idDict)
+            for value in idDict[key]["vulnerabilities"]:
+                print("Printing Value")
+                print(value)
+                # This is where the error is, but the printed value is correct.
+                # Need to figure out how to resolve the error
                 vulnInfoDict.update(value)
                 for plugin in vulnInfoDict.values():
                     print("Printing plugin[0]['plugin_id']")
