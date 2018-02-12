@@ -36,35 +36,52 @@ def getAssets(headerInfo):
         idArray.append('353df3b6-2c3a-432b-b1bb-97eb41662aa1')
 
         # Instantiating new dict
-        newDict = {}
+        idDict = {}
         for id in idArray:
-            newDict[id] = 0
+            idDict[id] = 0
 
         # Take each ID in the array and plug it into /workbenches/assets/{asset_id}/vulnerabilities to get the plugin ID for each asset
         for id in idArray:
             vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/vulnerabilities', headers=headerInfo)
             vulnInfoJson = vulnInfo.json()
-            # Appends the vulnInfoJson using the id as the parent element
-            newDict.update({id:vulnInfoJson})
-            valueDict = {}
+            # Appends the vulnInfoJson using the id as the parent key
+            idDict.update({id:vulnInfoJson})
+            vulnInfoDict = {}
 
-        for key in newDict.keys():
-            print(key)
-            for value in newDict.values():
-                #print(value['vulnerabilities'])
-                valueDict.update(value)
-                for plugin in valueDict.values():
-                     print(plugin[0]['plugin_id'])
+        # print("Contents of newDict")
+        # print(newDict)
+
+        # print("Printing idDict key")
+        # print(idDict.keys())
+
+        print("Printing idDict.values()")
+        print(idDict.values())
+
+        for key in idDict.keys():
+            # print("Printing Key")
+            # print(key)
+            for value in idDict.values():
+                # print("Printing idDict.values")
+                # print(idDict.values())
+                # print("Printing value['vulnerabilities']")
+                # print(value['vulnerabilities'])
+                vulnInfoDict.update(value)
+                for plugin in vulnInfoDict.values():
+                    print("Printing plugin[0]['plugin_id']")
+                    print(plugin[0]['plugin_id'])
+
+        # print("Contents of valueDict")
+        # print(valueDict)
 
         # Now we need to lookup asset information and append to dict
 
         # Scaffolding method to write data to CSV
-            with open('VulnReport.csv', 'w', newline='') as outfile:
-                fieldnames = ['Asset Name', 'Application ID', 'Vuln Count']
-                writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-                writer.writeheader()
-                data = [dict(zip(fieldnames, [k, v])) for k, v in newDict.items()]
-                writer.writerows(data)
+        #     with open('VulnReport.csv', 'w', newline='') as outfile:
+        #         fieldnames = ['Asset Name', 'Application ID', 'Vuln Count']
+        #         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        #         writer.writeheader()
+        #         data = [dict(zip(fieldnames, [k, v])) for k, v in newDict.items()]
+        #         writer.writerows(data)
 
          # --------------------- OLD METHOD - SAVED FOR REFERENCE AND VISIBILITY ------------------------ #
          #   i=0
