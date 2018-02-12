@@ -48,35 +48,18 @@ def getAssets(headerInfo):
             idDict.update({id:vulnInfoJson})
             vulnInfoDict = {}
 
-        # print("Contents of newDict")
-        # print(newDict)
+        # Create dict for results set
+        pluginIdVal = {}
 
-        # print("Printing idDict key")
-        # print(idDict.keys())
-
-        # print("Printing idDict.values()")
-        # print(idDict.values())
-
-        # print("Printing idDict['756591ee-1281-4094-8b86-1621df975951']")
-        # print(idDict['756591ee-1281-4094-8b86-1621df975951']["vulnerabilities"])
-
+        # for loop to iterate through asset IDs and create key with list as value
+        # then add plugin_id's to list in child loop
         for key in idDict.keys():
-            # print("Printing Key")
-            # print(key)
-            print(idDict)
-            for value in idDict[key]["vulnerabilities"]:
-                vulnInfoDict.update(value)
-                # print("Printing vulnInfoDict")
-                # print(vulnInfoDict)
+            pluginIdVal[key] = list()
+            for value in idDict[key]['vulnerabilities']:
+                pluginIdVal[key].append(value['plugin_id'])
 
-                # print("Printing the plugin_id")
-                # print(vulnInfoDict["plugin_id"])
+        print(pluginIdVal)
 
-                for plugin in vulnInfoDict.values():
-                    print(plugin)
-
-        # print("Contents of valueDict")
-        # print(valueDict)
 
         # Now we need to lookup asset information and append to dict
 
@@ -88,19 +71,6 @@ def getAssets(headerInfo):
         #         data = [dict(zip(fieldnames, [k, v])) for k, v in newDict.items()]
         #         writer.writerows(data)
 
-         # --------------------- OLD METHOD - SAVED FOR REFERENCE AND VISIBILITY ------------------------ #
-         #   i=0
-         #   vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/'+idArray[i]+'/vulnerabilities', headers=headerInfo)
-         #   vulnInfoJson = vulnInfo.json()
-         #   # idArray[i].append(vulnInfoJson)
-         #   idArray[i] = idArray[i]+str(vulnInfoJson)
-         #   cpprint(idArray[i])
-         #   print(' \n')
-         #   print(' this is the current value of i \n' + str(i))
-         #   i=i+1
-
-        #print("Current value of idArray \n")
-        #print(idArray)
-
         return
+
 getAssets(header)
