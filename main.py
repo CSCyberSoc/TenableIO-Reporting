@@ -2,6 +2,8 @@ import requests
 import json
 from prettyprinter import cpprint, set_default_config
 from apiVars import *
+import os
+import csv
 
 # ------------------------- Authentication --------------------------------
 # API Call to generate and store session token
@@ -48,6 +50,16 @@ def getAssets(headerInfo):
         # Iterate through the dictionary
         for key, value in newDict.items():
             print(key, value)
+
+        # Now we need to lookup asset information and append to dict
+
+        # Scaffolding method to write data to CSV
+            with open('VulnReport.csv', 'w', newline='') as outfile:
+            fieldnames = ['Asset Name', 'Application ID', 'Vuln Count']
+            writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+            writer.writeheader()
+            data = [dict(zip(fieldnames, [k, v])) for k, v in newDict.items()]
+            writer.writerows(data)
 
          #   i=0
          #   vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/'+idArray[i]+'/vulnerabilities', headers=headerInfo)
