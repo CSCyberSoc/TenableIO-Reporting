@@ -44,10 +44,17 @@ def getAssets(headerInfo):
             vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/vulnerabilities', headers=headerInfo)
             vulnInfoJson = vulnInfo.json()
             newDict.update({id:vulnInfoJson})
+            valueDict = {}
 
-        for key, value in newDict.items():
-            print(key, value)
+        for key in newDict.keys():
+            print(key)
+            for value in newDict.values():
+                #print(value['vulnerabilities'])
+                valueDict.update(value)
+                for plugin in valueDict.values():
+                     print(plugin[0]['plugin_id'])
 
+         # --------------------- OLD METHOD - SAVED FOR REFERENCE AND VISIBILITY ------------------------ #
          #   i=0
          #   vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/'+idArray[i]+'/vulnerabilities', headers=headerInfo)
          #   vulnInfoJson = vulnInfo.json()
