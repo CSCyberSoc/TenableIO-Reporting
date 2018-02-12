@@ -23,28 +23,29 @@ def getAssets(headerInfo):
         assetList = getAssetList.json()
         assetParsed = assetList['assets']
         idArray = []
+        # Commented out while using static id idArray values on like 33 and 34
         # for item in assetParsed:
         #     assetID = item['id']
         #     idArray.append(assetID)
         # cpprint(idArray)
 
-        # this is just to target 2 IDs as a control
+        # Adding static ID values as a control, in lieu of lines 27-30
         idArray.append('756591ee-1281-4094-8b86-1621df975951')
         idArray.append('353df3b6-2c3a-432b-b1bb-97eb41662aa1')
-        #print("Current values in idArray \n")
-        #print(idArray)
+
+        # Instantiating new dict
         newDict = {}
         for id in idArray:
             newDict[id] = 0
-        print(newDict)
 
-        # take each ID in the array and plug it into /workbenches/assets/{asset_id}/vulnerabilities to get the plugin ID for each asset
+        # Take each ID in the array and plug it into /workbenches/assets/{asset_id}/vulnerabilities to get the plugin ID for each asset
         for id in idArray:
-            #print(id)
             vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/vulnerabilities', headers=headerInfo)
             vulnInfoJson = vulnInfo.json()
+            # Appends the vulnInfoJson using the id as the parent element
             newDict.update({id:vulnInfoJson})
 
+        # Iterate through the dictionary
         for key, value in newDict.items():
             print(key, value)
 
@@ -63,15 +64,3 @@ def getAssets(headerInfo):
 
         return
 getAssets(header)
-
-# ------------------------------ Get PluginID ---------------------------
-# def getPluginID(headerInfo):
-#     assetReturn = getAssets(header)
-#     cpprint(assetReturn)
-
-
-    # API call for plugin ID
-
-#     return
-#
-# getPluginID(header)
