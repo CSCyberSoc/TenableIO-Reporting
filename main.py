@@ -65,14 +65,15 @@ def getAssets(headerInfo):
             # print(key)
             print(idDict)
             for value in idDict[key]["vulnerabilities"]:
-                print("Printing Value")
-                print(value)
-                # This is where the error is, but the printed value is correct.
-                # Need to figure out how to resolve the error
                 vulnInfoDict.update(value)
+                # print("Printing vulnInfoDict")
+                # print(vulnInfoDict)
+
+                # print("Printing the plugin_id")
+                # print(vulnInfoDict["plugin_id"])
+
                 for plugin in vulnInfoDict.values():
-                    print("Printing plugin[0]['plugin_id']")
-                    print(plugin[0]['plugin_id'])
+                    print(plugin)
 
         # print("Contents of valueDict")
         # print(valueDict)
