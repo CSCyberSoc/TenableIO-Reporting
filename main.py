@@ -46,24 +46,28 @@ def getAssets(headerInfo):
             vulnInfoJson = vulnInfo.json()
             # Appends the vulnInfoJson using the id as the parent key
             idDict.update({id:vulnInfoJson})
-            vulnInfoDict = {}
-            vulnInfoList = []
 
         # Create dict for results set
-        pluginIdVal = {}
-        pluginResults = {}
+        # pluginIdVal = {}
+        # pluginResults = {}
+        vulnInfoDict = {}
 
         # For loop to iterate through asset IDs and create key with list as value
         # then add plugin_id's to list in child loop
         for key in idDict.keys():
             # pluginIdVal[key] = list()
             for value in idDict[key]['vulnerabilities']:
-                vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
+                pluginInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
+                pluginInfoJson = pluginInfo.json()
                 # adding the asset ID as the parent key, also adding plugin ID and vuln information
-                vulnInfoDict[key] = value['plugin_id'], vulnInfo.content
-                print(vulnInfoDict)
-                # vulnInfoList.append(vulnInfo)
+                idDict.update({key:pluginInfoJson})
+                # vulnInfoDict[key] = value['plugin_id'], pluginInfo.content
+                # print(vulnInfoDict)
+                # vulnInfoList.append(pluginInfo)
                 # pluginIdVal[key].append(value['plugin_id'])
+        print("Printing final updated idDict")
+        print(idDict)
+
 
         # Now we need to lookup asset information and append to dict
 
