@@ -43,13 +43,11 @@ def getAssets(headerInfo):
         # Take each ID in the array and plug it into /workbenches/assets/{asset_id}/vulnerabilities to get the plugin ID for each asset
         for id in idArray:
             vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/vulnerabilities', headers=headerInfo)
-            assetInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/info', headers=headerInfo)
             vulnInfoJson = vulnInfo.json()
             # Appends the vulnInfoJson using the id as the parent key
             idDict.update({id:vulnInfoJson})
 
-        # For loop to iterate through asset IDs and create key with list as value
-        # then add plugin_id's to list in child loop
+        # Loop to iterate through asset grabbing asset information and vulnerability information and adding to idDict
         for key in idDict.keys():
             for value in idDict[key]['vulnerabilities']:
                 pluginInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
@@ -60,17 +58,14 @@ def getAssets(headerInfo):
                 finalData = {**originalData, **pluginInfoJson, **assetInfoJson}
                 idDict[key] = finalData
         print(idDict)
-        # print(finalData)
-
-        # Now we need to lookup asset information and append to dict
 
         # Scaffolding method to write data to CSV
-        #     with open('VulnReport.csv', 'w', newline='') as outfile:
-        #         fieldnames = ['Asset Name', 'Application ID', 'Vuln Count']
-        #         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-        #         writer.writeheader()
-        #         data = [dict(zip(fieldnames, [k, v])) for k, v in newDict.items()]
-        #         writer.writerows(data)
+        with open('VulnReport.csv', 'w', newline='') as outfile:
+            fieldnames = ['Asset Name', 'Application ID', 'Vuln Count']
+            writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+            writer.writeheader()
+            data = [dict(zip(fieldnames, [k, v])) for k, v in idDict.items()]
+            writer.writerows(data)
 
         return
 
