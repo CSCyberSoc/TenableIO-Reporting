@@ -19,7 +19,7 @@ print(tokenParsed)
 header = {'X-Cookie': 'token='+tokenParsed}
 
 # ------------------------------ Get Assets ---------------------------
-# Gets the list of the assets so that we can pull the pulgin id in the next query
+# Gets the list of the assets so that we can pull the plugin id in the next query
 def getAssets(headerInfo):
         getAssetList = requests.get('https://cloud.tenable.com/assets/', headers=headerInfo)
         assetList = getAssetList.json()
@@ -43,31 +43,24 @@ def getAssets(headerInfo):
         # Take each ID in the array and plug it into /workbenches/assets/{asset_id}/vulnerabilities to get the plugin ID for each asset
         for id in idArray:
             vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/vulnerabilities', headers=headerInfo)
+            assetInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/info', headers=headerInfo)
             vulnInfoJson = vulnInfo.json()
             # Appends the vulnInfoJson using the id as the parent key
             idDict.update({id:vulnInfoJson})
 
-        # Create dict for results set
-        # pluginIdVal = {}
-        # pluginResults = {}
-        vulnInfoDict = {}
-
         # For loop to iterate through asset IDs and create key with list as value
         # then add plugin_id's to list in child loop
         for key in idDict.keys():
-            # pluginIdVal[key] = list()
             for value in idDict[key]['vulnerabilities']:
                 pluginInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
                 pluginInfoJson = pluginInfo.json()
-                # adding the asset ID as the parent key, also adding plugin ID and vuln information
-                idDict.update({key:pluginInfoJson})
-                # vulnInfoDict[key] = value['plugin_id'], pluginInfo.content
-                # print(vulnInfoDict)
-                # vulnInfoList.append(pluginInfo)
-                # pluginIdVal[key].append(value['plugin_id'])
-        print("Printing final updated idDict")
+                originalData = idDict[key].copy()
+                assetInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/info', headers=headerInfo)
+                assetInfoJson = assetInfo.json()
+                finalData = {**originalData, **pluginInfoJson, **assetInfoJson}
+                idDict[key] = finalData
         print(idDict)
-
+        # print(finalData)
 
         # Now we need to lookup asset information and append to dict
 
