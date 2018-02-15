@@ -57,12 +57,37 @@ def getAssets(headerInfo):
                 assetInfoJson = assetInfo.json()
                 finalData = {**originalData, **pluginInfoJson, **assetInfoJson}
                 idDict[key] = finalData
-        print(idDict)
+        # print(idDict)
+        # added idDictJson simply for easier visibility for targeting values
+        idDictJson = json.dumps(idDict, indent=4)
+        print(idDictJson)
 
         print("Printing idDictJson")
         for id in idArray:
             print("Printing idDict at position " + id)
-            print(idDict[id]['vulnerabilities'][0]['count'])
+            # print(idDict[id]['vulnerabilities'][0]['count'])
+            # print("Printing plugin_id")
+            # print(idDict[id]['vulnerabilities'][0]['plugin_id'])
+            # print("Printing Plugin Name")
+            # print(idDict[id]['vulnerabilities'][0]['plugin_name'])
+            print("Printing Plugin OS (if available): ")
+            print(idDict[id]['info']['operating_system'][0])
+            # print("Printing Severity: ")
+            # print(idDict[id]['info']['counts']['vulnerabilities']['severities'][0]['name'])
+            print("Printing IP address: ")
+            print("Printing Protocol: ")
+            print("Printing Port: ")
+            print("Printing Exploit Available: ")
+            print("Printing MAC Address: ")
+            print("Printing DNS Name: ")
+            print("Printing Solution: ")
+            print("Printing CVE (if available): ")
+            print("Printing First Discovered: ")
+            print("Printing Last Observed: ")
+            print("Printing Vuln Publication Date: ")
+            print("Printing Patch Publication Date: ")
+            print("Printing Plugin Publication Date: ")
+            print("Printing Plugin Modification Date: ")
 
         return
 
