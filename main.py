@@ -59,7 +59,10 @@ def getAssets(headerInfo):
                 idDict[key] = finalData
         print(idDict)
 
-        idDictJson = json.dumps(idDict, indent=4)
+        print("Printing idDictJson")
+        for id in idArray:
+            print("Printing idDict at position " + id)
+            print(idDict[id]['vulnerabilities'][0]['count'])
 
         return
 
