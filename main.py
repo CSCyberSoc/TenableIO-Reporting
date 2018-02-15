@@ -59,13 +59,7 @@ def getAssets(headerInfo):
                 idDict[key] = finalData
         print(idDict)
 
-        # Scaffolding method to write data to CSV
-        with open('VulnReport.csv', 'w', newline='') as outfile:
-            fieldnames = ['Asset Name', 'Application ID', 'Vuln Count']
-            writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-            writer.writeheader()
-            data = [dict(zip(fieldnames, [k, v])) for k, v in idDict.items()]
-            writer.writerows(data)
+        idDictJson = json.dumps(idDict, indent=4)
 
         return
 
