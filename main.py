@@ -55,12 +55,12 @@ def getAssets(headerInfo):
                 assetPluginInfoJson = assetPluginInfo.json()
                 originalData = idDict[key].copy()
 
-                for plugin_id in assetPluginInfo:
+                for plugin_id in assetPluginInfoJson:
                     # This gets more information about that specific vulnerability IE: Exploitable?
                     # This needs to be in a loop for each plugin id
                     vulnPluginInfo = requests.get('https://cloud.tenable.com/workbenches/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
                     vulnPluginInfoJson = vulnPluginInfo.json()
-                    print(vulnPluginInfoJson)
+                    print(vulnPluginInfoJson['info'])
 
                 # This gets more information about the asset scanned
                 assetInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/info', headers=headerInfo)
