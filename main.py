@@ -50,16 +50,22 @@ def getAssets(headerInfo):
         # Loop to iterate through asset grabbing asset information and vulnerability information and adding to idDict
         for key in idDict.keys():
             for value in idDict[key]['vulnerabilities']:
-                pluginInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
-                pluginInfoJson = pluginInfo.json()
+                # This gets vuln info specific to the asset and plugin ID
+                assetPluginInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
+                assetPluginInfoJson = assetPluginInfo.json()
                 originalData = idDict[key].copy()
+                # This gets more information about that specific vulnerability IE: Exploitable?
+                vulnPluginInfo = requests.get('https://cloud.tenable.com/workbenches/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
+                vulnPluginInfoJson = vulnPluginInfo.json()
+                # This gets more information about the asset scanned
                 assetInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/info', headers=headerInfo)
                 assetInfoJson = assetInfo.json()
-                finalData = {**originalData, **pluginInfoJson, **assetInfoJson}
+                finalData = {**originalData, **assetPluginInfoJson, **assetInfoJson, **vulnPluginInfoJson}
                 idDict[key] = finalData
         # print(idDict)
         # added idDictJson simply for easier visibility for targeting values
         idDictJson = json.dumps(idDict, indent=4)
+        print("Printing idDictJson")
         print(idDictJson)
 
         print("Printing idDictJson")
@@ -70,11 +76,12 @@ def getAssets(headerInfo):
             # print(idDict[id]['vulnerabilities'][0]['plugin_id'])
             # print("Printing Plugin Name")
             # print(idDict[id]['vulnerabilities'][0]['plugin_name'])
-            print("Printing Plugin OS (if available): ")
-            print(idDict[id]['info']['operating_system'][0])
+            # print("Printing Plugin OS (if available): ")
+            # print(idDict[id]['info']['operating_system'])
             # print("Printing Severity: ")
             # print(idDict[id]['info']['counts']['vulnerabilities']['severities'][0]['name'])
-            print("Printing IP address: ")
+            # print("Printing IP address: ")
+            # print(idDict[id]['info']['ipv4'][0])
             print("Printing Protocol: ")
             print("Printing Port: ")
             print("Printing Exploit Available: ")
