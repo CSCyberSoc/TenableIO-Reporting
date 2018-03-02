@@ -50,24 +50,36 @@ def getAssets(headerInfo):
         # Loop to iterate through asset grabbing asset information and vulnerability information and adding to idDict
         for key in idDict.keys():
             for value in idDict[key]['vulnerabilities']:
-                # This gets vuln info specific to the asset and plugin ID
+                # Making a copy of the original data to merge
+                originalData = idDict[key].copy()
+                assetAndVulnInfoDict = {}
+
+                # This gets vuln info specific to the asset and plugin ID; key = asset ID
                 assetPluginInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
                 assetPluginInfoJson = assetPluginInfo.json()
-                originalData = idDict[key].copy()
 
                 for plugin_id in assetPluginInfoJson:
+                    i = 0
                     # This gets more information about that specific vulnerability IE: Exploitable?
                     # This needs to be in a loop for each plugin id
                     vulnPluginInfo = requests.get('https://cloud.tenable.com/workbenches/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
                     vulnPluginInfoJson = vulnPluginInfo.json()
-                    print(vulnPluginInfoJson['info'])
+
+                    # what's happening here is the vuln info is being added to the dictionary and combined which is overwriting the existing value
+                    # might need to use an array, or append/update info to the dictionary
+                    # assetAndVulnInfoDict = {**assetPluginInfoJson, **vulnPluginInfoJson}
+                    new_result = vulnPluginInfoJson
+                    assetAndVulnInfoDict[i] = new_result
+                    i = i + 1
 
                 # This gets more information about the asset scanned
                 assetInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/info', headers=headerInfo)
                 assetInfoJson = assetInfo.json()
-                finalData = {**originalData, **assetPluginInfoJson, **assetInfoJson, **vulnPluginInfoJson}
+                print("Printing assetAndVulnInfoDict")
+                print(assetAndVulnInfoDict)
+                finalData = {**originalData, **assetAndVulnInfoDict, **assetInfoJson}
                 idDict[key] = finalData
-        # print(idDict)
+        print(idDict)
         # added idDictJson simply for easier visibility for targeting values
         idDictJson = json.dumps(idDict, indent=4)
         print("Printing idDictJson")
