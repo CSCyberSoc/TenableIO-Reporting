@@ -40,45 +40,58 @@ def getAssets(headerInfo):
         for id in idArray:
             idDict[id] = 0
 
-        # Take each ID in the array and plug it into /workbenches/assets/{asset_id}/vulnerabilities to get the plugin ID for each asset
-        for id in idArray:
-            vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/vulnerabilities', headers=headerInfo)
-            vulnInfoJson = vulnInfo.json()
-            # Appends the vulnInfoJson using the id as the parent key
-            idDict.update({id:vulnInfoJson})
+            # Take each ID in the array and plug it into /workbenches/assets/{asset_id}/vulnerabilities to get the plugin ID for each asset
+            for id in idArray:
+                vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/vulnerabilities', headers=headerInfo)
+                vulnInfoJson = vulnInfo.json()
+                # Appends the vulnInfoJson using the id as the parent key
+                idDict.update({id:vulnInfoJson})
 
-        # Loop to iterate through asset grabbing asset information and vulnerability information and adding to idDict
-        for key in idDict.keys():
-            for value in idDict[key]['vulnerabilities']:
-                # Making a copy of the original data to merge
-                originalData = idDict[key].copy()
-                assetAndVulnInfoDict = {}
+            # Loop to iterate through asset grabbing asset information and vulnerability information and adding to idDict
+            for key in idDict.keys():
 
-                # This gets vuln info specific to the asset and plugin ID; key = asset ID
-                assetPluginInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
-                assetPluginInfoJson = assetPluginInfo.json()
-
-                for plugin_id in assetPluginInfoJson:
-                    i = 0
-                    # This gets more information about that specific vulnerability IE: Exploitable?
-                    # This needs to be in a loop for each plugin id
-                    vulnPluginInfo = requests.get('https://cloud.tenable.com/workbenches/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
-                    vulnPluginInfoJson = vulnPluginInfo.json()
-
-                    # what's happening here is the vuln info is being added to the dictionary and combined which is overwriting the existing value
-                    # might need to use an array, or append/update info to the dictionary
-                    # assetAndVulnInfoDict = {**assetPluginInfoJson, **vulnPluginInfoJson}
-                    new_result = vulnPluginInfoJson
-                    assetAndVulnInfoDict[i] = new_result
-                    i = i + 1
-
+                # This is where we're going to grab the asset info
                 # This gets more information about the asset scanned
                 assetInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/info', headers=headerInfo)
-                assetInfoJson = assetInfo.json()
-                print("Printing assetAndVulnInfoDict")
-                print(assetAndVulnInfoDict)
-                finalData = {**originalData, **assetAndVulnInfoDict, **assetInfoJson}
-                idDict[key] = finalData
+                # assetInfoJson = assetInfo.json()
+
+                for value in idDict[key]['vulnerabilities']:
+                    # Making a copy of the original data to merge
+                    originalData = idDict[key].copy()
+                    assetAndVulnInfoDict = {}
+
+                    # This gets vuln info specific to the asset and plugin ID; key = asset ID
+                    assetPluginInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
+                    # assetPluginInfoJson = assetPluginInfo.json()
+
+                    for plugin_id in assetPluginInfo:
+                        i = 0
+                        # This gets more information about that specific vulnerability IE: Exploitable?
+                        # This needs to be in a loop for each plugin id
+                        vulnPluginInfo = requests.get('https://cloud.tenable.com/workbenches/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
+                        vulnPluginInfoJson = vulnPluginInfo.json()
+                        vulnPluginInfoDict = dict(vulnPluginInfoJson)
+                        print(vulnPluginInfoDict)
+
+                        # what's happening here is the vuln info is being added to the dictionary and combined which is overwriting the existing value
+                        # might need to use an array, or append/update info to the dictionary
+                        # assetAndVulnInfoDict = {**assetPluginInfoJson, **vulnPluginInfoJson}
+                        new_result = vulnPluginInfo
+                        assetAndVulnInfoDict[i] = new_result
+
+                        # Declaring CSV Obj
+                        # with open('vulns.csv', newline='') as csvfile:
+                        with open('vulnCSV.csv', 'w') as csvfile:
+                            fieldname = (vulnPluginInfoDict.keys())
+                            writer = csv.DictWriter(csvfile, delimiter=' ', quotechar='|', fieldnames=fieldname)
+                            # writer = csv.DictWriter(vulnInfoReport, fieldnames=fieldname)
+                            writer.writeheader()
+                            writer.writerow(vulnPluginInfoDict)
+
+                        i = i + 1
+
+                    # finalData = {**originalData, **assetAndVulnInfoDict, **assetInfoJson}
+                    # idDict[key] = finalData
         print(idDict)
         # added idDictJson simply for easier visibility for targeting values
         idDictJson = json.dumps(idDict, indent=4)
@@ -99,19 +112,19 @@ def getAssets(headerInfo):
             # print(idDict[id]['info']['counts']['vulnerabilities']['severities'][0]['name'])
             # print("Printing IP address: ")
             # print(idDict[id]['info']['ipv4'][0])
-            print("Printing Protocol: ")
-            print("Printing Port: ")
-            print("Printing Exploit Available: ")
-            print("Printing MAC Address: ")
-            print("Printing DNS Name: ")
-            print("Printing Solution: ")
-            print("Printing CVE (if available): ")
-            print("Printing First Discovered: ")
-            print("Printing Last Observed: ")
-            print("Printing Vuln Publication Date: ")
-            print("Printing Patch Publication Date: ")
-            print("Printing Plugin Publication Date: ")
-            print("Printing Plugin Modification Date: ")
+            # print("Printing Protocol: ")
+            # print("Printing Port: ")
+            # print("Printing Exploit Available: ")
+            # print("Printing MAC Address: ")
+            # print("Printing DNS Name: ")
+            # print("Printing Solution: ")
+            # print("Printing CVE (if available): ")
+            # print("Printing First Discovered: ")
+            # print("Printing Last Observed: ")
+            # print("Printing Vuln Publication Date: ")
+            # print("Printing Patch Publication Date: ")
+            # print("Printing Plugin Publication Date: ")
+            # print("Printing Plugin Modification Date: ")
 
         return
 
