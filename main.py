@@ -37,62 +37,65 @@ def getAssets(headerInfo):
 
         # Instantiating new dict
         idDict = {}
-        for id in idArray:
-            idDict[id] = 0
 
-            # Take each ID in the array and plug it into /workbenches/assets/{asset_id}/vulnerabilities to get the plugin ID for each asset
+        with open('vulnCSV.csv', 'w') as csvfile:
+            fieldname = ['count', 'reference_information', 'plugin_details', 'description', 'solution',
+                         'discovery', 'severity', 'see_also', 'vulnerability_information', 'synopsis',
+                         'risk_information']
+            writer = csv.DictWriter(csvfile, delimiter=',', lineterminator='\n', fieldnames=fieldname)
+            writer.writeheader()
+
             for id in idArray:
-                vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/vulnerabilities', headers=headerInfo)
-                vulnInfoJson = vulnInfo.json()
-                # Appends the vulnInfoJson using the id as the parent key
-                idDict.update({id:vulnInfoJson})
+                idDict[id] = 0
 
-            # Loop to iterate through asset grabbing asset information and vulnerability information and adding to idDict
-            for key in idDict.keys():
+                # Take each ID in the array and plug it into /workbenches/assets/{asset_id}/vulnerabilities to get the plugin ID for each asset
+                for id in idArray:
+                    vulnInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + id + '/vulnerabilities', headers=headerInfo)
+                    vulnInfoJson = vulnInfo.json()
+                    # Appends the vulnInfoJson using the id as the parent key
+                    idDict.update({id:vulnInfoJson})
 
-                # This is where we're going to grab the asset info
-                # This gets more information about the asset scanned
-                assetInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/info', headers=headerInfo)
-                # assetInfoJson = assetInfo.json()
+                # Loop to iterate through asset grabbing asset information and vulnerability information and adding to idDict
+                for key in idDict.keys():
 
-                for value in idDict[key]['vulnerabilities']:
-                    # Making a copy of the original data to merge
-                    originalData = idDict[key].copy()
-                    assetAndVulnInfoDict = {}
+                    # This is where we're going to grab the asset info
+                    # This gets more information about the asset scanned
+                    assetInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/info', headers=headerInfo)
+                    # assetInfoJson = assetInfo.json()
 
-                    # This gets vuln info specific to the asset and plugin ID; key = asset ID
-                    assetPluginInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
-                    # assetPluginInfoJson = assetPluginInfo.json()
+                    for value in idDict[key]['vulnerabilities']:
+                        # Making a copy of the original data to merge
+                        originalData = idDict[key].copy()
+                        assetAndVulnInfoDict = {}
 
-                    for plugin_id in assetPluginInfo:
-                        i = 0
-                        # This gets more information about that specific vulnerability IE: Exploitable?
-                        # This needs to be in a loop for each plugin id
-                        vulnPluginInfo = requests.get('https://cloud.tenable.com/workbenches/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
-                        vulnPluginInfoJson = vulnPluginInfo.json()
-                        vulnPluginInfoDict = dict(vulnPluginInfoJson)['info']
-                        print(vulnPluginInfoDict)
+                        # This gets vuln info specific to the asset and plugin ID; key = asset ID
+                        assetPluginInfo = requests.get('https://cloud.tenable.com/workbenches/assets/' + key + '/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
+                        # assetPluginInfoJson = assetPluginInfo.json()
 
-                        # what's happening here is the vuln info is being added to the dictionary and combined which is overwriting the existing value
-                        # might need to use an array, or append/update info to the dictionary
-                        # assetAndVulnInfoDict = {**assetPluginInfoJson, **vulnPluginInfoJson}
-                        new_result = vulnPluginInfo
-                        assetAndVulnInfoDict[i] = new_result
+                        for plugin_id in assetPluginInfo:
+                            i = 0
+                            # This gets more information about that specific vulnerability IE: Exploitable?
+                            # This needs to be in a loop for each plugin id
+                            vulnPluginInfo = requests.get('https://cloud.tenable.com/workbenches/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
+                            vulnPluginInfoJson = vulnPluginInfo.json()
+                            vulnPluginInfoDict = dict(vulnPluginInfoJson)['info']
+                            print(vulnPluginInfoDict)
 
-                        # Declaring CSV Obj
-                        # with open('vulns.csv', newline='') as csvfile:
-                        with open('vulnCSV.csv', 'w') as csvfile:
-                            fieldname = (vulnPluginInfoDict.keys())
-                            print("Printing fieldname")
-                            print(fieldname)
-                            writer = csv.DictWriter(csvfile, delimiter=',', lineterminator='\n', fieldnames=fieldname)
-                            writer.writeheader()
+                            # what's happening here is the vuln info is being added to the dictionary and combined which is overwriting the existing value
+                            # might need to use an array, or append/update info to the dictionary
+                            # assetAndVulnInfoDict = {**assetPluginInfoJson, **vulnPluginInfoJson}
+                            new_result = vulnPluginInfo
+                            assetAndVulnInfoDict[i] = new_result
+
+                            # Declaring CSV Obj
+                            # with open('vulns.csv', newline='') as csvfile:
+
                             writer.writerow(vulnPluginInfoDict)
 
-                        i = i + 1
+                            i = i + 1
 
-                    # finalData = {**originalData, **assetAndVulnInfoDict, **assetInfoJson}
-                    # idDict[key] = finalData
+                        # finalData = {**originalData, **assetAndVulnInfoDict, **assetInfoJson}
+                        # idDict[key] = finalData
         print(idDict)
         # added idDictJson simply for easier visibility for targeting values
         idDictJson = json.dumps(idDict, indent=4)
