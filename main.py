@@ -70,7 +70,7 @@ def getAssets(headerInfo):
                         # This needs to be in a loop for each plugin id
                         vulnPluginInfo = requests.get('https://cloud.tenable.com/workbenches/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
                         vulnPluginInfoJson = vulnPluginInfo.json()
-                        vulnPluginInfoDict = dict(vulnPluginInfoJson)
+                        vulnPluginInfoDict = dict(vulnPluginInfoJson)['info']
                         print(vulnPluginInfoDict)
 
                         # what's happening here is the vuln info is being added to the dictionary and combined which is overwriting the existing value
@@ -83,8 +83,9 @@ def getAssets(headerInfo):
                         # with open('vulns.csv', newline='') as csvfile:
                         with open('vulnCSV.csv', 'w') as csvfile:
                             fieldname = (vulnPluginInfoDict.keys())
-                            writer = csv.DictWriter(csvfile, delimiter=' ', quotechar='|', fieldnames=fieldname)
-                            # writer = csv.DictWriter(vulnInfoReport, fieldnames=fieldname)
+                            print("Printing fieldname")
+                            print(fieldname)
+                            writer = csv.DictWriter(csvfile, delimiter=',', lineterminator='\n', fieldnames=fieldname)
                             writer.writeheader()
                             writer.writerow(vulnPluginInfoDict)
 
