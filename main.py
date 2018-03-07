@@ -5,18 +5,8 @@ from apiVars import *
 import os
 import csv
 
-# ------------------------- Authentication --------------------------------
-# API Call to generate and store session token
-payload = {'username': apiUsername, 'password': apiPass}
-sessionToken = requests.post('https://cloud.tenable.com/session', data=json.dumps(payload))
-tokenResponse = sessionToken.json()
-
-# Final parsed token for use
-tokenParsed = tokenResponse['token']
-print(tokenParsed)
-
-# Construct the headers needed for api calls
-header = {'X-Cookie': 'token='+tokenParsed}
+# ------------------------- Authentication Header ---------------------
+header = {'X-ApiKeys': 'accessKey=' + apiAccessKey + '; secretKey=' + apiSecretKey}
 
 # ------------------------------ Get Assets ---------------------------
 # Gets the list of the assets so that we can pull the plugin id in the next query
