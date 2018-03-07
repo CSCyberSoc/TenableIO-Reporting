@@ -4,6 +4,7 @@ from prettyprinter import cpprint, set_default_config
 from apiVars import *
 import os
 import csv
+from dict_utils import *
 
 # ------------------------- Authentication Header ---------------------
 header = {'X-ApiKeys': 'accessKey=' + apiAccessKey + '; secretKey=' + apiSecretKey}
@@ -68,8 +69,11 @@ def getAssets(headerInfo):
                             # This needs to be in a loop for each plugin id
                             vulnPluginInfo = requests.get('https://cloud.tenable.com/workbenches/vulnerabilities/' + str(value['plugin_id']) + '/info', headers=headerInfo)
                             vulnPluginInfoJson = vulnPluginInfo.json()
-                            vulnPluginInfoDict = dict(vulnPluginInfoJson)['info']
-                            print(vulnPluginInfoDict)
+                            # vulnPluginInfoDict = dict(vulnPluginInfoJson)['info']
+                            vulnPluginInfoDict = dictify(vulnPluginInfoJson['info'])
+                            vulnPluginInfoFlat = flatten_dict(vulnPluginInfoDict)
+                            print("printing Flattened Dictionary Test")
+                            print(vulnPluginInfoFlat)
 
                             # what's happening here is the vuln info is being added to the dictionary and combined which is overwriting the existing value
                             # might need to use an array, or append/update info to the dictionary
