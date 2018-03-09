@@ -103,6 +103,9 @@ ENV/
 # apiVars
 apiVars.py
 
+# csv
+vulnCSV.csv
+
 *.xml
 
 *.iml
